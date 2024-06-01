@@ -43,8 +43,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: tests/go.mod
-          cache-dependency-path: tests/go.sum
+          go-version-file: test/go.mod
+          cache-dependency-path: test/go.sum
 
       - name: Checkout
         uses: actions/checkout@v4
