@@ -1,13 +1,17 @@
-// Variables are required to pass them via Terratest
-// on fixtures creation
-variable "this_vpc_id" {}
-
-variable "peer_vpc_id" {}
-
-variable "aws_this_access_key" {
-  description = "AWS Access Key for requester account"
+variable "test_id" {
+  type = string
+  validation {
+    condition     = can(regex("^\\d{11}$", var.test_id))
+    error_message = "test id must be a 11 character numeric string"
+  }
 }
 
-variable "aws_this_secret_key" {
-  description = "AWS Secret Key for requester account"
+// Variables are required to pass them via Terratest
+// on fixtures creation
+variable "this_vpc_id" {
+  type = string
+}
+
+variable "peer_vpc_id" {
+  type = string
 }

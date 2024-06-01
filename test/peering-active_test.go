@@ -1,6 +1,9 @@
 package test
 
 import (
+	"fmt"
+	"math"
+	"math/rand"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -23,16 +26,19 @@ func TestPeeringActive(t *testing.T) {
 		{"ModuleDependsOn", "", "../examples/module-depends-on"},
 		{"AssociatedCIDRs", "./fixtures/associated-cidr", "../examples/associated-cidrs"},
 	}
-
 	for _, tc := range testCases {
-		t.Run(tc.Name, func(t *testing.T) {
-			terratestRun(tc, t)
-		})
+		t.Run(tc.Name, func(t *testing.T) { terratestRun(t, tc) })
 	}
 }
 
-func terratestRun(tc TestCase, t *testing.T) {
-	var tfVars = make(map[string]interface{})
+func terratestRun(t *testing.T, tc TestCase) {
+	t.Parallel()
+
+	testRand := rand.Intn(int(math.Pow10(11)))
+	testId := fmt.Sprintf("%011d", testRand)
+	tfVars := make(map[string]interface{})
+	tfVars["test_id"] = testId
+
 	// Assertions
 	expectedPeeringStatus := "active"
 
@@ -41,39 +47,35 @@ func terratestRun(tc TestCase, t *testing.T) {
 		// Terraform Options for fixtures
 		fixturesTerraformOptions := &terraform.Options{
 			TerraformDir: tc.FixturesDir,
+			Vars: map[string]interface{}{
+				"test_id": testId,
+			},
 		}
 
 		// Remove the fixtures resources in the end of the test
 		defer terraform.Destroy(t, fixturesTerraformOptions)
-
 		// Install Prerequisites
 		terraform.InitAndApply(t, fixturesTerraformOptions)
-
 		// Get the outputs from fixtures
 		thisVpcID := terraform.Output(t, fixturesTerraformOptions, "this_vpc_id")
 		peerVpcID := terraform.Output(t, fixturesTerraformOptions, "peer_vpc_id")
 
 		tfVars["this_vpc_id"] = thisVpcID
 		tfVars["peer_vpc_id"] = peerVpcID
-
 	}
 
 	// Terraform Options for module
 	moduleTerraformOptions := &terraform.Options{
 		TerraformDir: tc.ModuleDir,
-		// Variables from the fixtures
-		Vars: tfVars,
+		Vars:         tfVars,
 	}
 
 	// Remove the module resources in the end of the test
 	defer terraform.Destroy(t, moduleTerraformOptions)
-
 	// Create module resources
 	terraform.InitAndApply(t, moduleTerraformOptions)
-
 	// Retrieve information with `terraform output`
 	actualPeeringStatus := terraform.Output(t, moduleTerraformOptions, "vpc_peering_accept_status")
-
 	// Verify results
 	assert.Equal(t, expectedPeeringStatus, actualPeeringStatus)
 }

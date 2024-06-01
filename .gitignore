@@ -1,3 +1,6 @@
+.idea/
+.DS_Store
+
 # Terraform files
 *.tfstate
 *.tfstate.backup
@@ -17,3 +20,6 @@ go.sum
 
 # Environment variables
 .env
+
+# Localstack
+volume/
