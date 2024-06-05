@@ -19,15 +19,9 @@ jobs:
   terraform-static:
     name: terraform-fmt
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        terraform: ['1.5.7', '1.8.4']
     steps:
       -  uses: actions/checkout@master
-      -  uses: hashicorp/setup-terraform@v1
-         with:
-           terraform_version: ${{ matrix.terraform }}
-
+      -  uses: hashicorp/setup-terraform@v3
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
@@ -36,9 +30,8 @@ jobs:
     name: terratest
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
       matrix:
-        terraform: ['1.5.7', '1.7.3']
+        terraform: ['1.5.7', '1.7.3', '1.8.4']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
