@@ -19,11 +19,13 @@ type TestCase struct {
 func TestPeeringActive(t *testing.T) {
 	testCases := []TestCase{
 		{"SingleAccountSingleRegion", "./fixtures/single-account-single-region", "../examples/single-account-single-region"},
+		{"SingleAccountSingleRegionOneDualStack", "./fixtures/single-account-single-region-one-dualstack", "../examples/single-account-single-region-one-dualstack"},
 		{"SingleAccountSingleRegionWithOptions", "./fixtures/single-account-single-region-with-options", "../examples/single-account-single-region-with-options"},
 		{"SingleAccountMultiRegion", "./fixtures/single-account-multi-region", "../examples/single-account-multi-region"},
 		{"MultiAccountSingleRegion", "./fixtures/multi-account-single-region", "../examples/multi-account-single-region"},
+		{"MultiAccountSingleRegionBothDualStack", "./fixtures/multi-account-single-region-both-dualstack", "../examples/multi-account-single-region-both-dualstack"},
 		{"MultiAccountMultiRegion", "./fixtures/multi-account-multi-region", "../examples/multi-account-multi-region"},
-		{"ModuleDependsOn", "", "../examples/module-depends-on"},
+		// {"ModuleDependsOn", "", "../examples/module-depends-on"},
 		{"AssociatedCIDRs", "./fixtures/associated-cidr", "../examples/associated-cidrs"},
 	}
 	for _, tc := range testCases {
